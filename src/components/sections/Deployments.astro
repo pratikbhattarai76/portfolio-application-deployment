@@ -60,9 +60,14 @@
         Exporters.
       </p>
 
-      <button class="deployment-card-button deployment-card-button-solid btn-glow-hover" type="button">
+      <a
+        class="deployment-card-button deployment-card-button-solid btn-glow-hover deployment-card-link"
+        href="https://monitor.pratik-labs.xyz"
+        target="_blank"
+        rel="noreferrer"
+      >
         Stream Metrics
-      </button>
+      </a>
     </article>
   </div>
 
@@ -80,7 +85,7 @@
       <div class="connection-modal-header">
         <h3 id="deployment-connection-title" class="connection-modal-title">
           <span class="material-symbols-outlined">terminal</span>
-          CONNECTION_PARAMS
+          CONNECTION_PARAMETERS
         </h3>
 
         <button
@@ -106,14 +111,19 @@
 
         <div class="connection-modal-field">
           <span class="connection-modal-label">Decryption Key</span>
-          <div class="connection-modal-value connection-modal-value-accent">Password: Guest@123@12</div>
+          <div class="connection-modal-value connection-modal-value-accent">Password: Guest@123@12@1</div>
         </div>
       </div>
 
       <div class="connection-modal-actions">
-        <button id="deployment-confirm-connection" class="connection-modal-button" type="button">
-          Acknowledge
-        </button>
+        <a
+          class="connection-modal-button"
+          href="https://cloud.pratik-labs.xyz"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Visit
+        </a>
       </div>
     </div>
   </div>
@@ -123,7 +133,6 @@
   const modal = document.getElementById('deployment-connection-modal');
   const openButton = document.getElementById('deployment-open-connection');
   const closeButton = document.getElementById('deployment-close-connection');
-  const confirmButton = document.getElementById('deployment-confirm-connection');
 
   const closeModal = () => {
     if (!modal) {
@@ -149,7 +158,6 @@
 
   openButton?.addEventListener('click', openModal);
   closeButton?.addEventListener('click', closeModal);
-  confirmButton?.addEventListener('click', closeModal);
 
   modal?.addEventListener('click', (event) => {
     if (event.target === modal) {
