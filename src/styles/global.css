@@ -75,3 +75,147 @@ body {
   @apply h-4 w-4;
 }
 
+.infrastructure-section {
+  @apply mx-auto max-w-4xl px-6 pt-24 pb-12;
+}
+
+.infrastructure-card {
+  @apply overflow-hidden rounded-lg border border-cyber-border/40 shadow-2xl bg-slate-900/40;
+}
+
+.infrastructure-header {
+  @apply flex items-center justify-between border-b border-cyber-border/40 bg-slate-950/60 px-4 py-2;
+}
+
+.infrastructure-dots {
+  @apply flex items-center gap-2;
+}
+
+.infrastructure-dot {
+  @apply h-3 w-3 rounded-full;
+}
+
+.infrastructure-dot-red {
+  @apply bg-red-500/80;
+}
+
+.infrastructure-dot-yellow {
+  @apply bg-yellow-500/80;
+}
+
+.infrastructure-dot-green {
+  @apply bg-green-500/80;
+}
+
+.infrastructure-title {
+  @apply text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500;
+}
+
+.infrastructure-body {
+  @apply grid gap-8 bg-slate-900/40 p-8 md:grid-cols-2;
+}
+
+.infrastructure-status {
+  @apply flex items-center gap-4 border-b border-cyber-border/40 pb-6 md:border-b-0 md:border-r md:pb-0 md:pr-8;
+}
+
+.infrastructure-status-icon {
+  @apply h-4 w-4 rounded-full bg-green-500 shadow-[0_0_15px_#22c55e];
+}
+
+.infrastructure-status-label {
+  @apply text-3xl font-mono tracking-tight transition-colors;
+}
+
+.infrastructure-status-label-link {
+  @apply inline-block text-inherit no-underline transition-colors hover:text-cyber-accent;
+}
+
+.infrastructure-status-subtitle {
+  @apply mt-1 text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500;
+}
+
+.infrastructure-specs {
+  @apply space-y-6 text-[13px] font-mono text-slate-200;
+}
+
+.infrastructure-spec {
+  @apply flex items-start gap-4;
+}
+
+.infrastructure-spec-icon {
+  @apply mt-1 rounded border border-cyber-accent/30 bg-cyber-accent/10 px-2 py-1 text-[10px] font-semibold text-cyber-accent;
+}
+
+.infrastructure-spec-main {
+  @apply text-slate-100;
+}
+
+.infrastructure-spec-sub {
+  @apply text-[10px] uppercase tracking-tight text-slate-500;
+}
+
+.deployments-section {
+  @apply mx-auto max-w-6xl px-6 pt-24 pb-12;
+}
+
+.deployments-header {
+  @apply mb-12 text-center;
+}
+
+.deployments-title {
+  @apply text-4xl font-bold tracking-tight;
+}
+
+.deployments-subtitle {
+  @apply mt-2 text-[10px] font-mono uppercase tracking-[0.3em] text-cyber-accent;
+}
+
+.deployments-grid {
+  @apply grid gap-8 md:grid-cols-3;
+}
+
+.deployment-card {
+  @apply glass-effect flex h-full flex-col rounded-lg border border-cyber-border/40 p-6 transition-colors;
+}
+
+.deployment-card-header {
+  @apply mb-6 flex items-start justify-between;
+}
+
+.deployment-card-icon {
+  @apply inline-flex h-10 w-10 items-center justify-center rounded-full border border-cyber-accent/40 text-sm font-mono text-cyber-accent;
+}
+
+.deployment-card-badge {
+  @apply rounded px-2 py-1 text-[9px] font-mono;
+}
+
+.deployment-card-badge-green {
+  @apply border border-green-500/40 bg-green-500/10 text-green-400;
+}
+
+.deployment-card-badge-red {
+  @apply border border-red-500/40 bg-red-500/10 text-red-400;
+}
+
+.deployment-card-badge-cyan {
+  @apply border border-cyber-accent/40 bg-cyber-accent/10 text-cyber-accent;
+}
+
+.deployment-card-title {
+  @apply mb-3 font-mono text-2xl font-bold tracking-tight;
+}
+
+.deployment-card-text {
+  @apply mb-6 flex-1 text-sm leading-relaxed text-slate-400;
+}
+
+.deployment-card-button {
+  @apply w-full rounded-sm border border-cyber-accent/40 px-4 py-3 text-[11px] font-mono font-semibold uppercase tracking-[0.2em] text-cyber-accent transition-colors hover:bg-cyber-accent hover:text-cyber-bg;
+}
+
+.deployment-card-button-disabled {
+  @apply cursor-not-allowed border-slate-700 bg-transparent text-slate-500 hover:bg-transparent hover:text-slate-500;
+}
+
