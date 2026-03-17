@@ -14,3 +14,64 @@ body {
   backdrop-filter: blur(12px);
 }
 
+.neon-glow {
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+}
+
+.btn-glow-hover:hover {
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
+  transform: translateY(-1px);
+}
+
+.hero {
+  @apply mx-auto max-w-6xl px-6 pt-28 pb-12 text-center;
+}
+
+.hero-image-wrap {
+  @apply relative mx-auto mb-8 h-40 w-40;
+}
+
+.hero-image-glow {
+  @apply absolute inset-0 rounded-full bg-cyber-accent/20 blur-3xl;
+}
+
+.hero-image {
+  @apply relative h-40 w-40 rounded-full border-2 border-cyber-accent p-1 object-cover;
+}
+
+.hero-title {
+  @apply text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl;
+}
+
+.hero-subtitle {
+  @apply mt-4 text-lg font-semibold uppercase tracking-[0.2em] text-cyber-accent sm:text-xl;
+}
+
+.hero-description {
+  @apply mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-400 sm:text-lg;
+}
+
+.hero-actions {
+  @apply mt-10 flex flex-wrap justify-center gap-4;
+}
+
+.hero-button {
+  @apply inline-flex items-center rounded-sm px-8 py-3 font-bold transition-all;
+}
+
+.hero-button-primary {
+  @apply gap-2 bg-cyber-accent text-cyber-bg;
+}
+
+.hero-button-outline {
+  @apply border border-cyber-accent text-cyber-accent hover:bg-cyber-accent/10;
+}
+
+.hero-button-muted {
+  @apply bg-slate-800 text-white hover:bg-slate-700;
+}
+
+.hero-icon {
+  @apply h-4 w-4;
+}
+
