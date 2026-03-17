@@ -23,7 +23,7 @@ const stackGroups = [
   {
     label: 'NETWORK',
     items: [
-      ['Nginx Proxy', 'Layer 7 traffic routing, SSL termination, and domain multiplexing.'],
+      ['Nginx Proxy', 'Layer 7 traffic routing'],
       ['Cloudflared', 'Zero-trust outbound tunnel for secure ingress without open ports.'],
       ['Tailscale', 'Mesh VPN for encrypted, private administrative access.'],
     ],
@@ -122,6 +122,15 @@ const stackGroups = [
           </div>
 
           <svg class="project-network-visual" viewBox="0 0 600 550" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <filter id="project-packet-glow" x="-200%" y="-200%" width="400%" height="400%">
+                <feGaussianBlur stdDeviation="2" result="blur"></feGaussianBlur>
+                <feMerge>
+                  <feMergeNode in="blur"></feMergeNode>
+                  <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+              </filter>
+            </defs>
             <g transform="translate(300, 30)">
               <circle fill="transparent" r="12" stroke="#475569" stroke-dasharray="2" stroke-width="1"></circle>
               <text
@@ -133,15 +142,22 @@ const stackGroups = [
                 text-anchor="middle"
                 dominant-baseline="middle"
               >
-                External User
+                User
               </text>
-              <path d="M-4,-4 L4,4 M-4,4 L4,-4" stroke="#475569" stroke-width="1"></path>
+              <circle cx="0" cy="-3.5" r="3" fill="none" stroke="#94a3b8" stroke-width="1"></circle>
+              <path
+                d="M-5,5.5 C-5,2.5 5,2.5 5,5.5"
+                fill="none"
+                stroke="#94a3b8"
+                stroke-linecap="round"
+                stroke-width="1"
+              ></path>
             </g>
 
-            <path class="project-network-line project-network-flow" d="M300,45 L300,80" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path id="project-flow-edge" class="project-network-line project-network-flow" d="M300,30 L300,67" fill="none" stroke="#22d3ee" stroke-width="1"></path>
 
             <g transform="translate(300, 80)">
-              <rect fill="#0a0f1d" height="26" rx="4" stroke="#22d3ee" stroke-width="1" width="110" x="-55" y="-13"></rect>
+              <rect class="project-network-node project-network-node-edge" fill="#0a0f1d" height="26" rx="4" stroke="#22d3ee" stroke-width="1" width="110" x="-55" y="-13"></rect>
               <text
                 fill="#22d3ee"
                 font-family="JetBrains Mono"
@@ -154,33 +170,73 @@ const stackGroups = [
             </g>
 
             <path
+              id="project-flow-tunnel"
               class="project-network-line project-network-flow"
-              d="M300,93 L300,165"
+              d="M300,93 L300,198"
               fill="none"
               stroke="#22d3ee"
               stroke-dasharray="4"
               stroke-width="1.5"
             ></path>
             <text x="350" y="125" fill="#22d3ee" font-family="JetBrains Mono" font-size="7" opacity="0.6" text-anchor="middle">
-              mTLS Tunnel
+              Zero Trust Tunnel
             </text>
 
             <rect
+              class="project-network-boundary"
               x="30"
               y="165"
               width="540"
-              height="360"
+              height="342"
               rx="12"
               fill="rgba(34, 211, 238, 0.02)"
               stroke="rgba(34, 211, 238, 0.3)"
               stroke-width="1"
             ></rect>
-            <text x="45" y="185" fill="rgba(34, 211, 238, 0.4)" font-family="JetBrains Mono" font-size="9" font-weight="bold">
-              Physical Server Node: LVM-1
+            <g transform="translate(18, 160)" aria-hidden="true">
+              <rect x="0" y="0" width="24" height="30" rx="3" fill="#08101f" stroke="rgba(34, 211, 238, 0.45)" stroke-width="1"></rect>
+              <rect x="4" y="5" width="16" height="7" rx="1.5" fill="none" stroke="#22d3ee" stroke-width="1"></rect>
+              <rect x="4" y="17" width="16" height="7" rx="1.5" fill="none" stroke="#22d3ee" stroke-width="1"></rect>
+              <circle cx="7" cy="8.5" r="1" fill="#22d3ee"></circle>
+              <circle cx="7" cy="20.5" r="1" fill="#22d3ee"></circle>
+              <path d="M10 27 H14" stroke="#22d3ee" stroke-linecap="round" stroke-width="1"></path>
+            </g>
+            <text x="50" y="180" fill="rgba(34, 211, 238, 0.45)" font-family="JetBrains Mono" font-size="9" font-weight="bold">
+              Server
             </text>
-
+            <rect
+              class="project-network-boundary project-network-boundary-soft"
+              x="72"
+              y="191"
+              width="456"
+              height="287"
+              rx="10"
+              fill="transparent"
+              stroke="rgba(34, 211, 238, 0.16)"
+              stroke-dasharray="4 4"
+              stroke-width="1"
+            ></rect>
+            <image href="/icons/docker.svg" x="66" y="184" width="22" height="22"></image>
+            <text x="92" y="197" fill="rgba(34, 211, 238, 0.45)" font-family="JetBrains Mono" font-size="8" font-weight="bold" dominant-baseline="middle">
+              Docker
+            </text>
+            <rect
+              class="project-network-zone"
+              x="168"
+              y="196"
+              width="264"
+              height="126"
+              rx="10"
+              fill="rgba(239, 68, 68, 0.03)"
+              stroke="rgba(248, 113, 113, 0.5)"
+              stroke-dasharray="4 4"
+              stroke-width="1"
+            ></rect>
+            <text x="182" y="210" fill="rgba(248, 113, 113, 0.7)" font-family="JetBrains Mono" font-size="8" font-weight="bold">
+              Ingress DMZ
+            </text>
             <g transform="translate(300, 220)">
-              <circle fill="#0a0f1d" r="22" stroke="#22d3ee" stroke-width="1"></circle>
+              <circle class="project-network-node project-network-node-core" fill="#0a0f1d" r="22" stroke="#22d3ee" stroke-width="1"></circle>
               <text
                 y="32"
                 fill="#94a3b8"
@@ -191,89 +247,157 @@ const stackGroups = [
               >
                 cloudflared
               </text>
-              <path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#22d3ee" stroke-width="1"></path>
+              <image href="/icons/cloudflare.svg" x="-9" y="-9" width="18" height="18"></image>
             </g>
 
-            <path class="project-network-line project-network-flow" d="M300,242 L300,280" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path id="project-flow-bridge" class="project-network-line project-network-flow" d="M300,242 L300,280" fill="none" stroke="#22d3ee" stroke-width="1"></path>
             <text x="240" y="265" fill="#475569" font-family="JetBrains Mono" font-size="7" text-anchor="middle">
               docker-cloudflared bridge
             </text>
 
-            <g transform="translate(300, 300)">
-              <rect fill="#0a0f1d" height="30" rx="4" stroke="#22d3ee" stroke-width="1" width="110" x="-55" y="-15"></rect>
-              <text
-                fill="#22d3ee"
-                font-family="JetBrains Mono"
-                font-size="9"
-                text-anchor="middle"
-                dominant-baseline="middle"
-              >
-                Nginx-LB
-              </text>
-            </g>
+            <a class="project-network-link project-network-link-core" href="https://proxy.pratik-labs.xyz" target="_blank" rel="noreferrer">
+              <g transform="translate(300, 300)">
+                <rect class="project-network-node project-network-node-core" fill="#0a0f1d" height="30" rx="4" stroke="#22d3ee" stroke-width="1" width="110" x="-55" y="-15"></rect>
+                <text
+                  class="project-network-link-text"
+                  fill="#22d3ee"
+                  font-family="JetBrains Mono"
+                  font-size="9"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                >
+                  Nginx
+                </text>
+              </g>
+            </a>
 
-            <path class="project-network-line project-network-flow" d="M300,315 L120,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
-            <path class="project-network-line project-network-flow" d="M300,315 L240,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
-            <path class="project-network-line project-network-flow" d="M300,315 L360,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
-            <path class="project-network-line project-network-flow" d="M300,315 L480,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path id="project-flow-vaultwarden" class="project-network-line project-network-flow" d="M300,315 L120,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path id="project-flow-nextcloud" class="project-network-line project-network-flow" d="M300,315 L240,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path id="project-flow-portainer" class="project-network-line project-network-flow" d="M300,315 L360,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path id="project-flow-grafana" class="project-network-line project-network-flow" d="M300,315 L480,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path id="project-flow-kuma" class="project-network-line project-network-flow" d="M300,315 L300,430" fill="none" stroke="#22d3ee" stroke-width="1"></path>
             <text x="300" y="350" fill="#475569" font-family="JetBrains Mono" font-size="7" text-anchor="middle">
               docker-proxy network
             </text>
 
-            <g transform="translate(120, 400)">
-              <rect fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
-              <text
-                fill="#94a3b8"
-                font-family="JetBrains Mono"
-                font-size="8"
-                text-anchor="middle"
-                dominant-baseline="middle"
-              >
-                Vaultwarden
-              </text>
-            </g>
+            <a class="project-network-link" href="https://vault.pratik-labs.xyz" target="_blank" rel="noreferrer">
+              <g transform="translate(120, 400)">
+                <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
+                <text
+                  fill="#94a3b8"
+                  font-family="JetBrains Mono"
+                  font-size="8"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                >
+                  Vaultwarden
+                </text>
+              </g>
+            </a>
 
-            <g transform="translate(240, 400)">
-              <rect fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
-              <text
-                fill="#94a3b8"
-                font-family="JetBrains Mono"
-                font-size="8"
-                text-anchor="middle"
-                dominant-baseline="middle"
-              >
-                Nextcloud
-              </text>
-            </g>
+            <a class="project-network-link" href="https://cloud.pratik-labs.xyz" target="_blank" rel="noreferrer">
+              <g transform="translate(240, 400)">
+                <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
+                <text
+                  fill="#94a3b8"
+                  font-family="JetBrains Mono"
+                  font-size="8"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                >
+                  Nextcloud
+                </text>
+              </g>
+            </a>
 
-            <g transform="translate(360, 400)">
-              <rect fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
-              <text
-                fill="#94a3b8"
-                font-family="JetBrains Mono"
-                font-size="8"
-                text-anchor="middle"
-                dominant-baseline="middle"
-              >
-                Portainer
-              </text>
-            </g>
+            <a class="project-network-link" href="https://portainer.pratik-labs.xyz" target="_blank" rel="noreferrer">
+              <g transform="translate(360, 400)">
+                <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
+                <text
+                  fill="#94a3b8"
+                  font-family="JetBrains Mono"
+                  font-size="8"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                >
+                  Portainer
+                </text>
+              </g>
+            </a>
 
-            <g transform="translate(480, 400)">
-              <rect fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
-              <text
-                fill="#94a3b8"
-                font-family="JetBrains Mono"
-                font-size="8"
-                text-anchor="middle"
-                dominant-baseline="middle"
-              >
-                Grafana
-              </text>
-            </g>
+            <a class="project-network-link" href="https://monitor.pratik-labs.xyz" target="_blank" rel="noreferrer">
+              <g transform="translate(480, 400)">
+                <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
+                <text
+                  fill="#94a3b8"
+                  font-family="JetBrains Mono"
+                  font-size="8"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                >
+                  Grafana
+                </text>
+              </g>
+            </a>
+
+            <a class="project-network-link" href="https://status.pratik-labs.xyz" target="_blank" rel="noreferrer">
+              <g transform="translate(300, 448)">
+                <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="95" x="-47" y="-12"></rect>
+                <text
+                  fill="#94a3b8"
+                  font-family="JetBrains Mono"
+                  font-size="8"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                >
+                  Uptime Kuma
+                </text>
+              </g>
+            </a>
 
             <circle class="project-network-pulse" cx="300" cy="55" r="2" fill="#22d3ee"></circle>
             <circle class="project-network-pulse" cx="300" cy="130" r="2" fill="#22d3ee" style="animation-delay: 0.5s"></circle>
+
+            <circle class="project-network-packet" r="3" fill="#67e8f9" filter="url(#project-packet-glow)">
+              <animateMotion dur="4.8s" repeatCount="indefinite" rotate="auto" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#project-flow-edge"></mpath>
+              </animateMotion>
+            </circle>
+            <circle class="project-network-packet" r="3" fill="#67e8f9" filter="url(#project-packet-glow)">
+              <animateMotion dur="5.2s" repeatCount="indefinite" rotate="auto" begin="0.45s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#project-flow-tunnel"></mpath>
+              </animateMotion>
+            </circle>
+            <circle class="project-network-packet" r="2.5" fill="#67e8f9" filter="url(#project-packet-glow)">
+              <animateMotion dur="4.4s" repeatCount="indefinite" rotate="auto" begin="0.35s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#project-flow-bridge"></mpath>
+              </animateMotion>
+            </circle>
+            <circle class="project-network-packet" r="2.25" fill="#67e8f9" filter="url(#project-packet-glow)">
+              <animateMotion dur="5s" repeatCount="indefinite" rotate="auto" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#project-flow-vaultwarden"></mpath>
+              </animateMotion>
+            </circle>
+            <circle class="project-network-packet" r="2.25" fill="#67e8f9" filter="url(#project-packet-glow)">
+              <animateMotion dur="4.8s" repeatCount="indefinite" rotate="auto" begin="0.7s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#project-flow-nextcloud"></mpath>
+              </animateMotion>
+            </circle>
+            <circle class="project-network-packet" r="2.25" fill="#67e8f9" filter="url(#project-packet-glow)">
+              <animateMotion dur="5.1s" repeatCount="indefinite" rotate="auto" begin="1s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#project-flow-portainer"></mpath>
+              </animateMotion>
+            </circle>
+            <circle class="project-network-packet" r="2.25" fill="#67e8f9" filter="url(#project-packet-glow)">
+              <animateMotion dur="5.4s" repeatCount="indefinite" rotate="auto" begin="0.2s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#project-flow-grafana"></mpath>
+              </animateMotion>
+            </circle>
+            <circle class="project-network-packet" r="2.25" fill="#67e8f9" filter="url(#project-packet-glow)">
+              <animateMotion dur="4.7s" repeatCount="indefinite" rotate="auto" begin="0.9s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#project-flow-kuma"></mpath>
+              </animateMotion>
+            </circle>
           </svg>
         </div>
       </div>

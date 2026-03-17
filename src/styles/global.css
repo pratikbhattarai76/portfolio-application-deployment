@@ -485,11 +485,16 @@ body {
 }
 
 .project-pillar-item {
-  @apply flex items-start gap-3;
+  @apply flex items-center gap-3;
 }
 
 .project-pillar-arrow {
   @apply text-cyber-accent transition-transform;
+  line-height: 1;
+}
+
+.project-pillar-item > span:last-child {
+  transform: translateY(2.5px);
 }
 
 .project-pillar:hover .project-pillar-arrow {
@@ -497,11 +502,16 @@ body {
 }
 
 .project-network-panel {
-  @apply relative flex min-h-[650px] flex-col items-center justify-center overflow-hidden rounded-lg border border-cyber-border bg-slate-950/40 p-4;
+  @apply relative flex min-h-[588px] flex-col items-center justify-center overflow-hidden rounded-lg border border-cyber-border bg-slate-950/40 p-4;
 }
 
 .project-network-label {
   @apply absolute left-6 top-4 z-10 flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-cyber-accent;
+  line-height: 1;
+}
+
+.project-network-label span {
+  transform: translateY(1px);
 }
 
 .project-network-indicator {
@@ -515,16 +525,72 @@ body {
 
 .project-network-line {
   stroke: #22d3ee;
-  stroke-dasharray: 10;
-  opacity: 0.2;
+  stroke-dasharray: 12 10;
+  stroke-linecap: round;
+  opacity: 0.34;
 }
 
 .project-network-flow {
-  animation: project-flow 2s linear infinite;
+  animation: project-flow 5.2s ease-in-out infinite alternate;
 }
 
 .project-network-pulse {
   animation: project-pulse-dot 3s ease-in-out infinite;
+}
+
+.project-network-packet {
+  opacity: 0.95;
+}
+
+.project-network-boundary {
+  animation: project-boundary-breathe 4.2s ease-in-out infinite;
+}
+
+.project-network-boundary-soft {
+  animation-duration: 5.4s;
+}
+
+.project-network-zone {
+  animation: project-zone-alert 3.4s ease-in-out infinite;
+}
+
+.project-network-node {
+  transition: fill 0.22s ease, stroke 0.22s ease, filter 0.22s ease;
+}
+
+.project-network-node-edge {
+  animation: project-node-edge 4s ease-in-out infinite;
+}
+
+.project-network-node-core {
+  animation: project-node-core 2.8s ease-in-out infinite;
+}
+
+.project-network-node-app {
+  animation: project-node-app 4.8s ease-in-out infinite;
+}
+
+.project-network-link {
+  cursor: pointer;
+}
+
+.project-network-link g {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.project-network-link text {
+  transition: fill 0.22s ease;
+}
+
+.project-network-link:hover .project-network-node {
+  fill: rgba(34, 211, 238, 0.12);
+  stroke: #67e8f9;
+  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.18));
+}
+
+.project-network-link:hover text {
+  fill: #67e8f9;
 }
 
 .project-stack {
@@ -599,10 +665,69 @@ body {
 
 @keyframes project-flow {
   from {
-    stroke-dashoffset: 20;
+    stroke-dashoffset: 0;
   }
 
   to {
-    stroke-dashoffset: 0;
+    stroke-dashoffset: -44;
+  }
+}
+
+@keyframes project-boundary-breathe {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes project-zone-alert {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes project-node-edge {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(34, 211, 238, 0));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.28));
+  }
+}
+
+@keyframes project-node-core {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(34, 211, 238, 0));
+    stroke: #22d3ee;
+  }
+
+  50% {
+    filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.35));
+    stroke: #67e8f9;
+  }
+}
+
+@keyframes project-node-app {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(34, 211, 238, 0));
+    stroke: #1e293b;
+  }
+
+  50% {
+    filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.12));
+    stroke: rgba(34, 211, 238, 0.4);
   }
 }
