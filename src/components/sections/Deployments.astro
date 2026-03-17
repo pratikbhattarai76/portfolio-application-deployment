@@ -5,47 +5,161 @@
   </header>
 
   <div class="deployments-grid">
-    <article class="deployment-card">
+    <article class="deployment-card deployment-card-interactive">
       <header class="deployment-card-header">
-        <span class="deployment-card-icon">NC</span>
-        <span class="deployment-card-badge deployment-card-badge-green">PUBLIC BETA</span>
+        <span class="deployment-card-icon-box" aria-hidden="true">
+          <span class="material-symbols-outlined deployment-card-symbol">cloud_done</span>
+        </span>
+        <span class="deployment-card-badge deployment-card-badge-green">PUBLIC_BETA</span>
       </header>
+
       <h3 class="deployment-card-title">Nextcloud</h3>
       <p class="deployment-card-text">
-        High-concurrency file storage and collaboration, optimized for low-latency web access.
+        Deployment of a high-concurrency file storage and collaboration engine. Optimized for
+        low-latency web access.
       </p>
-      <button class="deployment-card-button">
+
+      <button
+        id="deployment-open-connection"
+        class="deployment-card-button btn-glow-hover"
+        type="button"
+      >
         Initialize Connection
       </button>
     </article>
 
-    <article class="deployment-card">
+    <article class="deployment-card deployment-card-interactive">
       <header class="deployment-card-header">
-        <span class="deployment-card-icon">VW</span>
+        <span class="deployment-card-icon-box" aria-hidden="true">
+          <span class="material-symbols-outlined deployment-card-symbol">lock</span>
+        </span>
         <span class="deployment-card-badge deployment-card-badge-red">RESTRICTED</span>
       </header>
+
       <h3 class="deployment-card-title">Vaultwarden</h3>
       <p class="deployment-card-text">
-        Hardened secrets management behind a zero-trust tunnel with mTLS authentication.
+        Hardened secrets management container. Behind zero-trust tunnel with mTLS authentication.
       </p>
-      <button class="deployment-card-button deployment-card-button-disabled" disabled>
+
+      <button class="deployment-card-button deployment-card-button-disabled" type="button" disabled>
         Access Forbidden
       </button>
     </article>
 
-    <article class="deployment-card">
+    <article class="deployment-card deployment-card-interactive">
       <header class="deployment-card-header">
-        <span class="deployment-card-icon">GF</span>
+        <span class="deployment-card-icon-box" aria-hidden="true">
+          <span class="material-symbols-outlined deployment-card-symbol">monitoring</span>
+        </span>
         <span class="deployment-card-badge deployment-card-badge-cyan">REALTIME</span>
       </header>
+
       <h3 class="deployment-card-title">Grafana</h3>
       <p class="deployment-card-text">
-        Full-stack telemetry dashboards aggregating metrics from Prometheus and Node Exporters.
+        Full-stack telemetry dash visualization. Aggregating data from Prometheus and Node
+        Exporters.
       </p>
-      <button class="deployment-card-button">
+
+      <button class="deployment-card-button deployment-card-button-solid btn-glow-hover" type="button">
         Stream Metrics
       </button>
     </article>
   </div>
+
+  <div
+    id="deployment-connection-modal"
+    class="connection-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="deployment-connection-title"
+  >
+    <div class="connection-modal-panel glass-effect">
+      <div class="connection-modal-topbar" aria-hidden="true"></div>
+
+      <div class="connection-modal-header">
+        <h3 id="deployment-connection-title" class="connection-modal-title">
+          <span class="material-symbols-outlined">terminal</span>
+          CONNECTION_PARAMS
+        </h3>
+
+        <button
+          id="deployment-close-connection"
+          class="connection-modal-close"
+          type="button"
+          aria-label="Close connection modal"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="connection-modal-details">
+        <div class="connection-modal-field">
+          <span class="connection-modal-label">Server Address</span>
+          <div class="connection-modal-value">cloud.pratik-labs.xyz</div>
+        </div>
+
+        <div class="connection-modal-field">
+          <span class="connection-modal-label">Access Identity</span>
+          <div class="connection-modal-value connection-modal-value-accent">User: Guest</div>
+        </div>
+
+        <div class="connection-modal-field">
+          <span class="connection-modal-label">Decryption Key</span>
+          <div class="connection-modal-value connection-modal-value-accent">Password: Guest@123@12</div>
+        </div>
+      </div>
+
+      <div class="connection-modal-actions">
+        <button id="deployment-confirm-connection" class="connection-modal-button" type="button">
+          Acknowledge
+        </button>
+      </div>
+    </div>
+  </div>
 </section>
 
+<script is:inline>
+  const modal = document.getElementById('deployment-connection-modal');
+  const openButton = document.getElementById('deployment-open-connection');
+  const closeButton = document.getElementById('deployment-close-connection');
+  const confirmButton = document.getElementById('deployment-confirm-connection');
+
+  const closeModal = () => {
+    if (!modal) {
+      return;
+    }
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  const openModal = () => {
+    if (!modal) {
+      return;
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  openButton?.addEventListener('click', openModal);
+  closeButton?.addEventListener('click', closeModal);
+  confirmButton?.addEventListener('click', closeModal);
+
+  modal?.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+</script>

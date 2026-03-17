@@ -263,7 +263,7 @@ body {
 }
 
 .deployments-header {
-  @apply mb-12 text-center;
+  @apply mb-16 text-center;
 }
 
 .deployments-title {
@@ -279,19 +279,49 @@ body {
 }
 
 .deployment-card {
-  @apply glass-effect flex h-full flex-col rounded-lg border border-cyber-border/40 p-6 transition-colors;
+  @apply glass-effect relative flex h-full flex-col overflow-hidden rounded-lg p-8 transition-all;
+}
+
+.deployment-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 0;
+  background: #22d3ee;
+  transition: height 0.3s ease;
+}
+
+.deployment-card-interactive:hover {
+  background: rgba(30, 41, 59, 0.42);
+  transform: translateY(-2px);
+}
+
+.deployment-card-interactive:hover::before {
+  height: 100%;
+}
+
+.deployment-card-interactive:hover .deployment-card-title {
+  color: #22d3ee;
 }
 
 .deployment-card-header {
-  @apply mb-6 flex items-start justify-between;
+  @apply mb-8 flex items-start justify-between;
 }
 
-.deployment-card-icon {
-  @apply inline-flex h-10 w-10 items-center justify-center rounded-full border border-cyber-accent/40 text-sm font-mono text-cyber-accent;
+.deployment-card-icon-box {
+  @apply inline-flex rounded border border-cyber-accent/20 bg-cyber-accent/10 p-3 text-cyber-accent;
+}
+
+.deployment-card-symbol {
+  font-size: 2.25rem;
+  line-height: 1;
+  opacity: 0.85;
 }
 
 .deployment-card-badge {
-  @apply rounded px-2 py-1 text-[9px] font-mono;
+  @apply rounded px-2 py-1 text-[9px] font-mono uppercase tracking-[0.12em];
 }
 
 .deployment-card-badge-green {
@@ -307,17 +337,73 @@ body {
 }
 
 .deployment-card-title {
-  @apply mb-3 font-mono text-2xl font-bold tracking-tight;
+  @apply mb-4 font-mono text-2xl font-bold tracking-tight transition-colors;
 }
 
 .deployment-card-text {
-  @apply mb-6 flex-1 text-sm leading-relaxed text-slate-400;
+  @apply mb-8 flex-1 text-sm leading-relaxed text-slate-400;
 }
 
 .deployment-card-button {
-  @apply w-full rounded-sm border border-cyber-accent/40 px-4 py-3 text-[11px] font-mono font-semibold uppercase tracking-[0.2em] text-cyber-accent transition-colors hover:bg-cyber-accent hover:text-cyber-bg;
+  @apply w-full rounded-sm border border-cyber-accent/40 bg-transparent px-4 py-3 text-[11px] font-mono font-semibold uppercase tracking-[0.2em] text-cyber-accent transition-all hover:bg-cyber-accent hover:text-cyber-bg;
 }
 
 .deployment-card-button-disabled {
-  @apply cursor-not-allowed border-slate-700 bg-transparent text-slate-500 hover:bg-transparent hover:text-slate-500;
+  @apply cursor-not-allowed border-slate-700 text-slate-500 hover:bg-transparent hover:text-slate-500;
+}
+
+.deployment-card-button-solid {
+  @apply border-cyber-accent bg-cyber-accent text-cyber-bg hover:brightness-110;
+}
+
+.connection-modal {
+  @apply fixed inset-0 z-[100] items-center justify-center bg-cyber-bg/90 p-4 backdrop-blur-sm;
+}
+
+.connection-modal-panel {
+  @apply relative w-full max-w-md overflow-hidden rounded-lg border-2 border-cyber-accent/40 p-8;
+}
+
+.connection-modal-topbar {
+  @apply absolute left-0 top-0 h-1 w-full bg-cyber-accent;
+}
+
+.connection-modal-header {
+  @apply mb-6 flex items-center justify-between gap-4;
+}
+
+.connection-modal-title {
+  @apply flex items-center gap-2 font-mono text-lg uppercase tracking-[0.2em] text-cyber-accent;
+}
+
+.connection-modal-close {
+  @apply text-slate-500 transition-colors hover:text-cyber-accent;
+}
+
+.connection-modal-details {
+  @apply space-y-6 font-mono;
+}
+
+.connection-modal-field {
+  @apply space-y-2;
+}
+
+.connection-modal-label {
+  @apply block text-[10px] uppercase tracking-[0.2em] text-slate-500;
+}
+
+.connection-modal-value {
+  @apply border border-cyber-border bg-slate-900/60 p-3 text-white;
+}
+
+.connection-modal-value-accent {
+  @apply text-cyber-accent;
+}
+
+.connection-modal-actions {
+  @apply mt-8 flex justify-end border-t border-cyber-border pt-6;
+}
+
+.connection-modal-button {
+  @apply rounded-sm bg-cyber-accent px-6 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-cyber-bg transition-all hover:brightness-110;
 }
