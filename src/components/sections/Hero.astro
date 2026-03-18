@@ -1,4 +1,8 @@
-<section id="hero" class="hero">
+---
+import { siteConfig } from '../../config/site';
+---
+
+<section id="hero" class="hero reveal-section">
   <div class="hero-image-wrap">
     <div class="hero-image-glow"></div>
     <img
@@ -9,18 +13,18 @@
     />
   </div>
 
-  <h1 class="hero-title">Pratik Bhattarai</h1>
-  <h2 class="hero-subtitle">DevOps &amp; Cloud Engineer</h2>
+  <h1 class="hero-title">{siteConfig.name}</h1>
+  <h2 class="hero-subtitle">{siteConfig.title}</h2>
 
   <p class="hero-description">
     Orchestrating bare-metal hardware into mission-critical cloud infrastructure. Specialized in
     high-availability, self-hosted environments and zero-trust security.
   </p>
 
-  <div id="hero-actions" class="hero-actions">
+  <div class="hero-actions">
     <a
       class="hero-button hero-button-primary btn-glow-hover"
-      href="https://github.com/pratikbhattarai76"
+      href={siteConfig.githubUrl}
       target="_blank"
       rel="noreferrer"
     >
@@ -30,7 +34,7 @@
 
     <a
       class="hero-button hero-button-outline btn-glow-hover"
-      href="https://www.linkedin.com/in/pratik-bhattarai-01896a255/"
+      href={siteConfig.linkedinUrl}
       target="_blank"
       rel="noreferrer"
     >
@@ -39,10 +43,9 @@
 
     <a
       class="hero-button hero-button-muted btn-glow-hover"
-      href="#"
+      href={siteConfig.cvUrl}
     >
       Download CV
     </a>
   </div>
 </section>
-

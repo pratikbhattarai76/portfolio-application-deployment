@@ -1,0 +1,184 @@
+---
+import { siteConfig } from '../../config/site';
+---
+
+<section id="contact" class="contact-section reveal-section">
+  <div class="contact-shell">
+    <div class="contact-copy">
+      <span class="contact-kicker">Establish Connection</span>
+      <h2 class="contact-title">Contact</h2>
+      <p class="contact-description">
+        If you want to talk about infrastructure, observability, self-hosted platforms, or DevOps
+        work, send a message here. The form delivers mail directly to my main inbox, and I also
+        keep my personal email visible here for direct contact.
+      </p>
+
+      <div class="contact-links">
+        <a class="contact-link-card glass-effect" href={`mailto:${siteConfig.email}`}>
+          <span class="contact-link-label">Email</span>
+          <span class="contact-link-value">{siteConfig.email}</span>
+        </a>
+
+        <a class="contact-link-card glass-effect" href={siteConfig.linkedinUrl} target="_blank" rel="noreferrer">
+          <span class="contact-link-label">LinkedIn</span>
+          <span class="contact-link-value">Connect Directly</span>
+        </a>
+
+        <a class="contact-link-card glass-effect" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+          <span class="contact-link-label">GitHub</span>
+          <span class="contact-link-value">Review Current Works</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="contact-panel glass-effect">
+      <div class="contact-panel-badge">ENCRYPTED CHANNEL: MOMO STEAMER</div>
+      <h3 class="contact-panel-title">Prepare Message</h3>
+
+      <form id="contact-form" class="contact-form" novalidate>
+        <div class="contact-field-grid">
+          <label class="contact-field">
+            <span class="contact-label">Identifier</span>
+            <input id="contact-name" name="name" class="contact-input" type="text" placeholder="Your name" required />
+          </label>
+
+          <label class="contact-field">
+            <span class="contact-label">Connection Medium</span>
+            <input id="contact-medium" name="email" class="contact-input" type="email" placeholder="your@email.com" required />
+          </label>
+        </div>
+
+        <label class="contact-field">
+          <span class="contact-label">Subject</span>
+          <input id="contact-subject" name="subject" class="contact-input" type="text" placeholder="Project, role, or collaboration topic" required />
+        </label>
+
+        <label class="contact-field">
+          <span class="contact-label">Information</span>
+          <textarea
+            id="contact-message"
+            name="message"
+            class="contact-textarea"
+            rows="6"
+            placeholder="Describe the work, timeline, or problem you want to discuss..."
+            required
+          ></textarea>
+        </label>
+
+        <div class="contact-actions">
+          <button id="contact-submit" class="contact-submit btn-glow-hover" type="submit">Send Message</button>
+          <p id="contact-feedback" class="contact-feedback" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="contact-toast" class="contact-toast" role="status" aria-live="polite" aria-hidden="true">
+    <div class="contact-toast-title">Transmission Complete</div>
+    <div id="contact-toast-message" class="contact-toast-message">Message sent successfully.</div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ contactEmail: siteConfig.email }}>
+  const contactForm = document.getElementById('contact-form');
+  const contactFeedback = document.getElementById('contact-feedback');
+  const contactSubmit = document.getElementById('contact-submit');
+  const contactToast = document.getElementById('contact-toast');
+  const contactToastMessage = document.getElementById('contact-toast-message');
+  let contactToastTimer;
+
+  const showToast = (message, tone = 'success') => {
+    if (!contactToast || !contactToastMessage) {
+      return;
+    }
+
+    contactToast.classList.remove('contact-toast-success', 'contact-toast-error');
+    contactToast.classList.add(
+      'contact-toast-visible',
+      tone === 'error' ? 'contact-toast-error' : 'contact-toast-success'
+    );
+    contactToast.setAttribute('aria-hidden', 'false');
+    contactToastMessage.textContent = message;
+
+    window.clearTimeout(contactToastTimer);
+    contactToastTimer = window.setTimeout(() => {
+      contactToast.classList.remove('contact-toast-visible');
+      contactToast.setAttribute('aria-hidden', 'true');
+    }, 3400);
+  };
+
+  contactForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const name = document.getElementById('contact-name');
+    const medium = document.getElementById('contact-medium');
+    const subject = document.getElementById('contact-subject');
+    const message = document.getElementById('contact-message');
+
+    if (!(name instanceof HTMLInputElement) || !(medium instanceof HTMLInputElement) || !(subject instanceof HTMLInputElement) || !(message instanceof HTMLTextAreaElement)) {
+      return;
+    }
+
+    const run = async () => {
+      if (contactSubmit instanceof HTMLButtonElement) {
+        contactSubmit.disabled = true;
+        contactSubmit.textContent = 'Sending...';
+      }
+
+      if (contactFeedback) {
+        contactFeedback.textContent = '';
+      }
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name.value,
+            email: medium.value,
+            subject: subject.value,
+            message: message.value,
+          }),
+        });
+
+        const result = await response.json().catch(() => ({ message: 'Unexpected server response.' }));
+
+        if (!response.ok) {
+          throw new Error(typeof result.message === 'string' ? result.message : 'Unable to send your message.');
+        }
+
+        contactForm.reset();
+
+        if (contactFeedback) {
+          contactFeedback.textContent = `Sent to ${contactEmail}.`;
+        }
+
+        showToast(typeof result.message === 'string' ? result.message : 'Message sent successfully.');
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unable to send your message right now.';
+
+        if (contactFeedback) {
+          contactFeedback.textContent = errorMessage;
+        }
+
+        showToast(errorMessage, 'error');
+      } finally {
+        if (contactSubmit instanceof HTMLButtonElement) {
+          contactSubmit.disabled = false;
+          contactSubmit.textContent = 'Send Message';
+        }
+      }
+    };
+
+    void run();
+  });
+
+  contactToast?.addEventListener('click', () => {
+    contactToast.classList.remove('contact-toast-visible');
+    contactToast.setAttribute('aria-hidden', 'true');
+    window.clearTimeout(contactToastTimer);
+  });
+</script>

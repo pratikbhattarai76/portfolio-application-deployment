@@ -8,11 +8,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "start": "node ./dist/server/entry.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.18.1"
+    "@astrojs/node": "^9.5.5",
+    "astro": "^5.18.1",
+    "nodemailer": "^8.0.2"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",

@@ -1,10 +1,7 @@
 ---
 import '../styles/global.css';
 import Navbar from '../components/site/Navbar.astro';
-
-const pageTitle = 'Pratik Bhattarai | DevOps & Cloud Engineer';
-const pageDescription =
-	'Portfolio of Pratik Bhattarai — DevOps Specialist and Hybrid Private Cloud Architect.';
+import { siteConfig } from '../config/site';
 ---
 
 <!doctype html>
@@ -12,10 +9,8 @@ const pageDescription =
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="description" content={pageDescription} />
+		<meta name="description" content={siteConfig.description} />
 		<meta name="theme-color" content="#020617" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
@@ -27,7 +22,7 @@ const pageDescription =
 			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
 			rel="stylesheet"
 		/>
-		<title>{pageTitle}</title>
+		<title>{`${siteConfig.name} | ${siteConfig.title}`}</title>
 	</head>
 	<body class="site-body">
 		<div class="site-grid-layer grid-bg" aria-hidden="true"></div>
@@ -65,8 +60,48 @@ const pageDescription =
 					});
 				});
 			});
+
+			const revealElements = document.querySelectorAll('.reveal-section');
+			const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+			if (revealElements.length > 0) {
+				if (reducedMotion) {
+					revealElements.forEach((element) => element.classList.add('reveal-visible'));
+				} else {
+					const revealElement = (element) => {
+						element.classList.add('reveal-visible');
+					};
+
+					const observer = new IntersectionObserver(
+						(entries) => {
+							entries.forEach((entry) => {
+								if (!entry.isIntersecting) {
+									return;
+								}
+
+								revealElement(entry.target);
+								observer.unobserve(entry.target);
+							});
+						},
+						{
+							threshold: 0.16,
+							rootMargin: '0px 0px -10% 0px',
+						}
+					);
+
+					revealElements.forEach((element) => {
+						const bounds = element.getBoundingClientRect();
+						const inInitialView = bounds.top < window.innerHeight * 0.9;
+
+						if (inInitialView) {
+							revealElement(element);
+							return;
+						}
+
+						observer.observe(element);
+					});
+				}
+			}
 		</script>
 	</body>
 </html>
-
-<!-- base styles live in src/styles/global.css -->

@@ -1,0 +1,19 @@
+---
+import { siteConfig } from '../../config/site';
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer reveal-section">
+  <div class="site-footer-shell">
+    <div class="site-footer-copy">
+      <p class="site-footer-title">© {currentYear} {siteConfig.name}</p>
+      <p class="site-footer-text">{siteConfig.footerTagline}</p>
+    </div>
+
+    <div class="site-footer-links">
+      <a class="site-footer-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">GitHub</a>
+      <a class="site-footer-link" href={siteConfig.linkedinUrl} target="_blank" rel="noreferrer">LinkedIn</a>
+    </div>
+  </div>
+</footer>
