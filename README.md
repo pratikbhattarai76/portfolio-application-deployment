@@ -1,4 +1,4 @@
-# 🚀 Pratik's DevOps Portfolio & Cloud Portal
+# 🚀 My Personal DevOps Portfolio & Cloud Portal
 
 A high-performance, Server-Side Rendered (SSR) portfolio built to act as the public ingress point for my self-hosted Hybrid Private Cloud. 
 
