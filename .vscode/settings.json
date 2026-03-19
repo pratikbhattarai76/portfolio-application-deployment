@@ -1,8 +1,0 @@
-{
-  "files.exclude": {
-    "**/.astro": true
-  },
-  "search.exclude": {
-    "**/.astro": true
-  }
-}
