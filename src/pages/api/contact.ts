@@ -3,6 +3,8 @@ import nodemailer from 'nodemailer';
 import { siteConfig } from '../../config/site';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const maxBodySizeBytes = 16 * 1024;
+const requiredEnv = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS'] as const;
 
 const json = (status: number, body: Record<string, unknown>) =>
   new Response(JSON.stringify(body), {
@@ -18,26 +20,35 @@ const normalizeText = (value: unknown, maxLength: number) => {
     return '';
   }
 
-  return value.trim().replace(/\r\n/g, '\n').slice(0, maxLength);
+  return value.trim().replace(/\0/g, '').replace(/\r\n/g, '\n').slice(0, maxLength);
 };
 
-const requiredEnv = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS'] as const;
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const getEnvValue = (runtimeValue: string | undefined, buildValue: string | undefined) =>
+  runtimeValue ?? buildValue;
 
 const getEnv = () => ({
-  SMTP_HOST: process.env.SMTP_HOST ?? import.meta.env.SMTP_HOST,
-  SMTP_PORT: process.env.SMTP_PORT ?? import.meta.env.SMTP_PORT,
-  SMTP_USER: process.env.SMTP_USER ?? import.meta.env.SMTP_USER,
-  SMTP_PASS: process.env.SMTP_PASS ?? import.meta.env.SMTP_PASS,
-  SMTP_SECURE: process.env.SMTP_SECURE ?? import.meta.env.SMTP_SECURE,
-  SMTP_FROM_EMAIL: process.env.SMTP_FROM_EMAIL ?? import.meta.env.SMTP_FROM_EMAIL,
-  SMTP_FROM_NAME: process.env.SMTP_FROM_NAME ?? import.meta.env.SMTP_FROM_NAME,
-  CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL,
+  SMTP_HOST: getEnvValue(process.env.SMTP_HOST, import.meta.env.SMTP_HOST),
+  SMTP_PORT: getEnvValue(process.env.SMTP_PORT, import.meta.env.SMTP_PORT),
+  SMTP_USER: getEnvValue(process.env.SMTP_USER, import.meta.env.SMTP_USER),
+  SMTP_PASS: getEnvValue(process.env.SMTP_PASS, import.meta.env.SMTP_PASS),
+  SMTP_SECURE: getEnvValue(process.env.SMTP_SECURE, import.meta.env.SMTP_SECURE),
+  SMTP_FROM_EMAIL: getEnvValue(process.env.SMTP_FROM_EMAIL, import.meta.env.SMTP_FROM_EMAIL),
+  SMTP_FROM_NAME: getEnvValue(process.env.SMTP_FROM_NAME, import.meta.env.SMTP_FROM_NAME),
+  CONTACT_TO_EMAIL: getEnvValue(process.env.CONTACT_TO_EMAIL, import.meta.env.CONTACT_TO_EMAIL),
 });
 
 const missingEnv = (env: ReturnType<typeof getEnv>) => requiredEnv.filter((key) => !env[key]);
 
 const createTransport = (env: ReturnType<typeof getEnv>) => {
-  const port = Number(env.SMTP_PORT ?? '465');
+  const port = Number.parseInt(env.SMTP_PORT ?? '465', 10);
+
+  if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+    throw new Error('Invalid SMTP_PORT configuration.');
+  }
+
   const secure = env.SMTP_SECURE ? env.SMTP_SECURE === 'true' : port === 465;
 
   return nodemailer.createTransport({
@@ -68,11 +79,19 @@ const formatSentAt = (value: Date) =>
 export const POST: APIRoute = async ({ request }) => {
   const env = getEnv();
   const contentType = request.headers.get('content-type') ?? '';
+  const contentLength = request.headers.get('content-length');
 
   if (!contentType.includes('application/json')) {
     return json(415, {
       ok: false,
       message: 'Unsupported request format.',
+    });
+  }
+
+  if (contentLength && Number.parseInt(contentLength, 10) > maxBodySizeBytes) {
+    return json(413, {
+      ok: false,
+      message: 'Request payload is too large.',
     });
   }
 
@@ -87,11 +106,25 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const body = payload as Record<string, unknown>;
-  const name = normalizeText(body.name, 120);
-  const email = normalizeText(body.email, 160);
-  const subject = normalizeText(body.subject, 160);
-  const message = normalizeText(body.message, 5000);
+  if (!isPlainObject(payload)) {
+    return json(400, {
+      ok: false,
+      message: 'Invalid request body.',
+    });
+  }
+
+  const name = normalizeText(payload.name, 120);
+  const email = normalizeText(payload.email, 160);
+  const subject = normalizeText(payload.subject, 160);
+  const message = normalizeText(payload.message, 5000);
+  const company = normalizeText(payload.company, 120);
+
+  if (company) {
+    return json(200, {
+      ok: true,
+      message: 'Message sent successfully.',
+    });
+  }
 
   if (!name || !email || !subject || !message) {
     return json(400, {
@@ -100,10 +133,31 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
+  if (name.length < 2) {
+    return json(400, {
+      ok: false,
+      message: 'Please enter your name.',
+    });
+  }
+
   if (!emailPattern.test(email)) {
     return json(400, {
       ok: false,
       message: 'Please enter a valid email address.',
+    });
+  }
+
+  if (subject.length < 3) {
+    return json(400, {
+      ok: false,
+      message: 'Please add a short subject.',
+    });
+  }
+
+  if (message.length < 10) {
+    return json(400, {
+      ok: false,
+      message: 'Please provide enough detail for a useful reply.',
     });
   }
 
@@ -116,7 +170,15 @@ export const POST: APIRoute = async ({ request }) => {
 
   const to = env.CONTACT_TO_EMAIL ?? siteConfig.email;
   const fromAddress = env.SMTP_FROM_EMAIL ?? env.SMTP_USER ?? siteConfig.email;
-  const fromName = env.SMTP_FROM_NAME ?? `${siteConfig.name} Portfolio`;
+
+  if (!emailPattern.test(to) || !emailPattern.test(fromAddress)) {
+    return json(500, {
+      ok: false,
+      message: 'Contact service is not configured yet.',
+    });
+  }
+
+  const fromName = normalizeText(env.SMTP_FROM_NAME ?? `${siteConfig.name} Portfolio`, 120);
   const from = `"${fromName.replaceAll('"', '\\"')}" <${fromAddress}>`;
   const sentAt = formatSentAt(new Date());
   const mailSubject = `Portfolio Contact: ${subject}`;
@@ -158,7 +220,10 @@ export const POST: APIRoute = async ({ request }) => {
     await transporter.sendMail({
       from,
       to,
-      replyTo: email,
+      replyTo: {
+        address: email,
+        name,
+      },
       subject: mailSubject,
       text: textBody,
       html: htmlBody,

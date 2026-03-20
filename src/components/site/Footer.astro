@@ -4,16 +4,16 @@ import { siteConfig } from '../../config/site';
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="site-footer reveal-section">
+<footer class="site-footer">
   <div class="site-footer-shell">
-    <div class="site-footer-copy reveal-item" style="--reveal-order: 0;">
+    <div class="site-footer-copy">
       <p class="site-footer-title">© {currentYear} {siteConfig.name}</p>
       <p class="site-footer-text">{siteConfig.footerTagline}</p>
     </div>
 
-    <div class="site-footer-links reveal-item" style="--reveal-order: 1;">
-      <a class="site-footer-link" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">GitHub</a>
-      <a class="site-footer-link" href={siteConfig.linkedinUrl} target="_blank" rel="noreferrer">LinkedIn</a>
+    <div class="site-footer-links">
+      <a class="site-footer-link" href={siteConfig.githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="site-footer-link" href={siteConfig.linkedinUrl} target="_blank" rel="noopener noreferrer">LinkedIn</a>
     </div>
   </div>
 </footer>

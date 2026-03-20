@@ -1,4 +1,6 @@
 ---
+import { siteConfig } from '../../config/site';
+
 const securityPerimeterItems = [
   'Zero Trust Cloudflare Tunnels',
   'Secure Outbound Tunnel',
@@ -51,36 +53,60 @@ const stackGroups = [
 ];
 ---
 
-<section id="projects" class="projects-section reveal-section">
+<section id="projects" class="projects-section">
   <div class="projects-shell">
-    <header class="projects-header reveal-item" style="--reveal-order: 0;">
-      <div class="projects-heading-group">
+    <header class="projects-header reveal-section">
+      <div class="projects-heading-group reveal-item" style="--reveal-order: 0;">
         <h2 class="projects-title">Projects</h2>
       </div>
 
-      <div class="projects-summary">
+      <div class="projects-summary reveal-item" style="--reveal-order: 1;">
         <p>
           Detailed technical breakdown of architected solutions and operational deployments.
         </p>
       </div>
     </header>
 
-    <section id="private-cloud" class="project-feature">
+    <section id="private-cloud" class="project-feature reveal-section">
       <div class="project-feature-heading">
-        <h3 class="project-feature-title">Private Cloud Architecture</h3>
-        <div class="project-feature-rule" aria-hidden="true"></div>
+        <div class="project-feature-heading-row">
+          <h3 class="project-feature-title reveal-item" style="--reveal-order: 0;">
+            Private Cloud Architecture
+          </h3>
+          <a
+            class="project-feature-link btn-glow-hover reveal-item"
+            href={siteConfig.privateCloudArchitectureUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style="--reveal-order: 1;"
+          >
+            <img
+              src="/icons/github.svg"
+              alt=""
+              aria-hidden="true"
+              class="project-feature-link-icon"
+              loading="lazy"
+            />
+            <span>View on GitHub</span>
+            <span class="material-symbols-outlined project-feature-link-arrow" aria-hidden="true">
+              north_east
+            </span>
+          </a>
+        </div>
+        <div class="project-feature-rule reveal-item" style="--reveal-order: 2;" aria-hidden="true">
+        </div>
       </div>
 
       <div class="project-feature-layout">
         <div class="project-feature-details">
-          <p class="project-feature-description reveal-item" style="--reveal-order: 1;">
+          <p class="project-feature-description reveal-item" style="--reveal-order: 3;">
             Engineered a production-ready lab environment focused on
             <strong> High Availability </strong> and <strong> Security Hardening </strong>. This
             architecture serves as a scalable template for microservices-based business deployments.
           </p>
 
           <div class="project-pillars">
-            <article class="project-pillar glass-effect reveal-item" style="--reveal-order: 2;">
+            <article class="project-pillar glass-effect reveal-item" style="--reveal-order: 4;">
               <h4 class="project-pillar-title">Security Perimeter</h4>
               <ul class="project-pillar-list">
                 {
@@ -96,7 +122,7 @@ const stackGroups = [
               </ul>
             </article>
 
-            <article class="project-pillar glass-effect reveal-item" style="--reveal-order: 3;">
+            <article class="project-pillar glass-effect reveal-item" style="--reveal-order: 5;">
               <h4 class="project-pillar-title">Network Topology</h4>
               <ul class="project-pillar-list">
                 {
@@ -114,7 +140,7 @@ const stackGroups = [
           </div>
         </div>
 
-        <div class="project-network-panel glass-effect reveal-item" style="--reveal-order: 4;">
+        <div class="project-network-panel glass-effect reveal-item" style="--reveal-order: 6;">
           <div class="project-network-label">
             <div class="project-network-indicator" aria-hidden="true"></div>
             <span>Live Infrastructure Visualization</span>
@@ -254,7 +280,7 @@ const stackGroups = [
               docker-cloudflared bridge
             </text>
 
-            <a class="project-network-link project-network-link-core" href="https://proxy.pratik-labs.xyz" target="_blank" rel="noreferrer">
+            <a class="project-network-link project-network-link-core" href="https://proxy.pratik-labs.xyz" target="_blank" rel="noopener noreferrer">
               <g transform="translate(300, 300)">
                 <rect class="project-network-node project-network-node-core" fill="#0a0f1d" height="30" rx="4" stroke="#22d3ee" stroke-width="1" width="110" x="-55" y="-15"></rect>
                 <text
@@ -278,7 +304,7 @@ const stackGroups = [
               docker-proxy network
             </text>
 
-            <a class="project-network-link" href="https://vault.pratik-labs.xyz" target="_blank" rel="noreferrer">
+            <a class="project-network-link" href="https://vault.pratik-labs.xyz" target="_blank" rel="noopener noreferrer">
               <g transform="translate(120, 400)">
                 <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
                 <text
@@ -293,7 +319,7 @@ const stackGroups = [
               </g>
             </a>
 
-            <a class="project-network-link" href="https://cloud.pratik-labs.xyz" target="_blank" rel="noreferrer">
+            <a class="project-network-link" href="https://cloud.pratik-labs.xyz" target="_blank" rel="noopener noreferrer">
               <g transform="translate(240, 400)">
                 <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
                 <text
@@ -308,7 +334,7 @@ const stackGroups = [
               </g>
             </a>
 
-            <a class="project-network-link" href="https://portainer.pratik-labs.xyz" target="_blank" rel="noreferrer">
+            <a class="project-network-link" href="https://portainer.pratik-labs.xyz" target="_blank" rel="noopener noreferrer">
               <g transform="translate(360, 400)">
                 <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
                 <text
@@ -323,7 +349,7 @@ const stackGroups = [
               </g>
             </a>
 
-            <a class="project-network-link" href="https://monitor.pratik-labs.xyz" target="_blank" rel="noreferrer">
+            <a class="project-network-link" href="https://monitor.pratik-labs.xyz" target="_blank" rel="noopener noreferrer">
               <g transform="translate(480, 400)">
                 <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
                 <text
@@ -338,7 +364,7 @@ const stackGroups = [
               </g>
             </a>
 
-            <a class="project-network-link" href="https://status.pratik-labs.xyz" target="_blank" rel="noreferrer">
+            <a class="project-network-link" href="https://status.pratik-labs.xyz" target="_blank" rel="noopener noreferrer">
               <g transform="translate(300, 448)">
                 <rect class="project-network-node project-network-node-app" fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="95" x="-47" y="-12"></rect>
                 <text
@@ -401,8 +427,8 @@ const stackGroups = [
       </div>
     </section>
 
-    <section id="tech-stack" class="project-stack">
-      <h4 class="project-stack-title">Project Dependencies &amp; Stack</h4>
+    <section id="tech-stack" class="project-stack reveal-section">
+      <h4 class="project-stack-title reveal-item" style="--reveal-order: 0;">Project Dependencies &amp; Stack</h4>
 
       <div class="project-stack-grid">
         {

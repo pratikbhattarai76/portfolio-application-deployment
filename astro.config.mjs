@@ -5,6 +5,7 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://web.pratik-labs.xyz',
   output: 'server',
   adapter: node({
     mode: 'standalone',

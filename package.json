@@ -5,24 +5,35 @@
   "engines": {
     "node": ">=24.14.0"
   },
- "scripts": {
+  "scripts": {
     "dev": "astro dev",
+    "check": "astro check",
     "build": "astro build",
+    "smoke": "node ./scripts/smoke-test.mjs",
+    "ci:verify": "npm run check && npm run build && npm run smoke",
     "start": "node ./dist/server/entry.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
+  "browserslist": [
+    "last 2 versions",
+    "Firefox ESR",
+    "not dead",
+    "not op_mini all"
+  ],
   "dependencies": {
     "@astrojs/node": "^9.5.2",
     "astro": "^5.17.3",
     "nodemailer": "^8.0.2"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.4",
     "@astrojs/tailwind": "^6.0.2",
     "@types/node": "^25.5.0",
     "@types/nodemailer": "^7.0.11",
     "autoprefixer": "^10.4.27",
     "postcss": "^8.5.8",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.3"
   }
 }

@@ -1,10 +1,11 @@
-<section id="deployments" class="deployments-section reveal-section">
-  <header class="deployments-header reveal-item" style="--reveal-order: 0;">
-    <h2 class="deployments-title">Microservice Command Center</h2>
-    <p class="deployments-subtitle">Accessing Distributed Infrastructure</p>
-  </header>
+<section id="deployments" class="deployments-section">
+  <div class="reveal-section">
+    <header class="deployments-header reveal-item" style="--reveal-order: 0;">
+      <h2 class="deployments-title">Microservice Command Center</h2>
+      <p class="deployments-subtitle">Accessing Distributed Infrastructure</p>
+    </header>
 
-  <div class="deployments-grid">
+    <div class="deployments-grid">
     <article class="deployment-card deployment-card-interactive reveal-item" style="--reveal-order: 1;">
       <header class="deployment-card-header">
         <span class="deployment-card-icon-box" aria-hidden="true">
@@ -64,11 +65,12 @@
         class="deployment-card-button deployment-card-button-solid btn-glow-hover"
         href="https://monitor.pratik-labs.xyz"
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
       >
         Stream Metrics
       </a>
     </article>
+    </div>
   </div>
 
   <div
@@ -162,7 +164,7 @@
           class="connection-modal-button"
           href="https://cloud.pratik-labs.xyz"
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
           Visit
         </a>
@@ -178,6 +180,7 @@
   const modalPanel = modal?.querySelector('.connection-modal-panel');
   const copyButtons = modal?.querySelectorAll('[data-copy-value]');
   let activeTrigger = null;
+  let previousBodyOverflow = '';
 
   const resetCopyButton = (button) => {
     window.clearTimeout(Number(button.dataset.copyTimer));
@@ -221,6 +224,15 @@
     }
   };
 
+  const getFocusableElements = () =>
+    modalPanel
+      ? Array.from(
+          modalPanel.querySelectorAll(
+            'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((element) => element instanceof HTMLElement)
+      : [];
+
   const closeModal = () => {
     if (!modal) {
       return;
@@ -229,7 +241,7 @@
     modal.classList.add('hidden');
     modal.classList.remove('flex');
     modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    document.body.style.overflow = previousBodyOverflow;
     activeTrigger?.focus();
   };
 
@@ -239,6 +251,7 @@
     }
 
     activeTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    previousBodyOverflow = document.body.style.overflow;
     modal.classList.remove('hidden');
     modal.classList.add('flex');
     modal.setAttribute('aria-hidden', 'false');
@@ -258,6 +271,26 @@
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
       closeModal();
+      return;
+    }
+
+    if (event.key === 'Tab' && modal && !modal.classList.contains('hidden')) {
+      const focusableElements = getFocusableElements();
+
+      if (focusableElements.length === 0 || !(document.activeElement instanceof HTMLElement)) {
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
     }
   });
 

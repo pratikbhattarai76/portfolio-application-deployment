@@ -2,9 +2,9 @@
 import { siteConfig } from '../../config/site';
 ---
 
-<section id="contact" class="contact-section reveal-section">
+<section id="contact" class="contact-section">
   <div class="contact-shell">
-    <div class="contact-copy">
+    <div class="contact-copy reveal-section">
       <span class="contact-kicker reveal-item" style="--reveal-order: 0;">Establish Connection</span>
       <h2 class="contact-title reveal-item" style="--reveal-order: 1;">Contact</h2>
       <p class="contact-description reveal-item" style="--reveal-order: 2;">
@@ -19,38 +19,89 @@ import { siteConfig } from '../../config/site';
           <span class="contact-link-value">{siteConfig.email}</span>
         </a>
 
-        <a class="contact-link-card glass-effect" href={siteConfig.linkedinUrl} target="_blank" rel="noreferrer">
+        <a
+          class="contact-link-card glass-effect"
+          href={siteConfig.linkedinUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <span class="contact-link-label">LinkedIn</span>
           <span class="contact-link-value">Connect Directly</span>
         </a>
 
-        <a class="contact-link-card glass-effect" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+        <a
+          class="contact-link-card glass-effect"
+          href={siteConfig.githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <span class="contact-link-label">GitHub</span>
           <span class="contact-link-value">Review Current Works</span>
         </a>
       </div>
     </div>
 
-    <div class="contact-panel glass-effect reveal-item" style="--reveal-order: 4;">
-      <div class="contact-panel-badge">ENCRYPTED CHANNEL: MOMO STEAMER</div>
+    <div class="contact-panel glass-effect reveal-section">
+      <div class="contact-panel-badge">MAIL RELAY ACTIVE</div>
       <h3 class="contact-panel-title">Prepare Message</h3>
 
       <form id="contact-form" class="contact-form" novalidate>
+        <label class="contact-honeypot" aria-hidden="true">
+          <span class="sr-only">Leave this field empty</span>
+          <input
+            id="contact-company"
+            name="company"
+            type="text"
+            autocomplete="off"
+            tabindex="-1"
+          />
+        </label>
+
         <div class="contact-field-grid">
           <label class="contact-field">
             <span class="contact-label">Identifier</span>
-            <input id="contact-name" name="name" class="contact-input" type="text" placeholder="Your name" required />
+            <input
+              id="contact-name"
+              name="name"
+              class="contact-input"
+              type="text"
+              placeholder="Your name"
+              autocomplete="name"
+              minlength="2"
+              maxlength="120"
+              required
+            />
           </label>
 
           <label class="contact-field">
             <span class="contact-label">Connection Medium</span>
-            <input id="contact-medium" name="email" class="contact-input" type="email" placeholder="your@email.com" required />
+            <input
+              id="contact-medium"
+              name="email"
+              class="contact-input"
+              type="email"
+              placeholder="your@email.com"
+              autocomplete="email"
+              inputmode="email"
+              maxlength="160"
+              required
+            />
           </label>
         </div>
 
         <label class="contact-field">
           <span class="contact-label">Subject</span>
-          <input id="contact-subject" name="subject" class="contact-input" type="text" placeholder="Project, role, or collaboration topic" required />
+          <input
+            id="contact-subject"
+            name="subject"
+            class="contact-input"
+            type="text"
+            placeholder="Project, role, or collaboration topic"
+            autocomplete="off"
+            minlength="3"
+            maxlength="160"
+            required
+          />
         </label>
 
         <label class="contact-field">
@@ -61,19 +112,37 @@ import { siteConfig } from '../../config/site';
             class="contact-textarea"
             rows="6"
             placeholder="Describe the work, timeline, or problem you want to discuss..."
+            minlength="10"
+            maxlength="5000"
+            spellcheck="true"
             required
           ></textarea>
         </label>
 
         <div class="contact-actions">
-          <button id="contact-submit" class="contact-submit btn-glow-hover" type="submit">Send Message</button>
-          <p id="contact-feedback" class="contact-feedback" aria-live="polite"></p>
+          <button id="contact-submit" class="contact-submit btn-glow-hover" type="submit">
+            Send Message
+          </button>
+          <p
+            id="contact-feedback"
+            class="contact-feedback"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          ></p>
         </div>
       </form>
     </div>
   </div>
 
-  <div id="contact-toast" class="contact-toast" role="status" aria-live="polite" aria-hidden="true">
+  <div
+    id="contact-toast"
+    class="contact-toast"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    aria-hidden="true"
+  >
     <div class="contact-toast-title">Transmission Complete</div>
     <div id="contact-toast-message" class="contact-toast-message">Message sent successfully.</div>
   </div>
@@ -85,7 +154,28 @@ import { siteConfig } from '../../config/site';
   const contactSubmit = document.getElementById('contact-submit');
   const contactToast = document.getElementById('contact-toast');
   const contactToastMessage = document.getElementById('contact-toast-message');
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const contactFieldLimits = {
+    name: { min: 2, max: 120 },
+    email: { min: 3, max: 160 },
+    subject: { min: 3, max: 160 },
+    message: { min: 10, max: 5000 },
+    company: { min: 0, max: 120 },
+  };
   let contactToastTimer;
+  let contactRequestTimer;
+
+  const normalizeValue = (value, maxLength) =>
+    typeof value === 'string' ? value.trim().replace(/\r\n/g, '\n').slice(0, maxLength) : '';
+
+  const setFeedback = (message, tone = 'neutral') => {
+    if (!contactFeedback) {
+      return;
+    }
+
+    contactFeedback.textContent = message;
+    contactFeedback.dataset.state = tone;
+  };
 
   const showToast = (message, tone = 'success') => {
     if (!contactToast || !contactToastMessage) {
@@ -107,27 +197,110 @@ import { siteConfig } from '../../config/site';
     }, 3400);
   };
 
+  const contactFields =
+    contactForm instanceof HTMLFormElement
+      ? Array.from(contactForm.querySelectorAll('input[name], textarea[name]')).filter(
+          (field) => field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement
+        )
+      : [];
+
+  const messageFields = contactFields.filter((field) => field.name !== 'company');
+
+  const setFieldError = (field, message) => {
+    field.setCustomValidity(message);
+
+    if (message) {
+      field.setAttribute('aria-invalid', 'true');
+    } else {
+      field.removeAttribute('aria-invalid');
+    }
+  };
+
+  const validateField = (field) => {
+    const limit = contactFieldLimits[field.name] ?? { min: 0, max: 5000 };
+    const value = normalizeValue(field.value, limit.max);
+    let message = '';
+
+    switch (field.name) {
+      case 'name':
+        if (value.length < contactFieldLimits.name.min) {
+          message = 'Please enter your name.';
+        }
+        break;
+      case 'email':
+        if (!value) {
+          message = 'Please enter your email address.';
+        } else if (!emailPattern.test(value)) {
+          message = 'Please enter a valid email address.';
+        }
+        break;
+      case 'subject':
+        if (value.length < contactFieldLimits.subject.min) {
+          message = 'Please add a short subject.';
+        }
+        break;
+      case 'message':
+        if (value.length < contactFieldLimits.message.min) {
+          message = 'Please provide enough detail for a useful reply.';
+        }
+        break;
+      default:
+        break;
+    }
+
+    setFieldError(field, message);
+    return message;
+  };
+
+  contactFields.forEach((field) => {
+    field.addEventListener('input', () => {
+      validateField(field);
+    });
+
+    field.addEventListener('blur', () => {
+      validateField(field);
+    });
+  });
+
   contactForm?.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const name = document.getElementById('contact-name');
-    const medium = document.getElementById('contact-medium');
-    const subject = document.getElementById('contact-subject');
-    const message = document.getElementById('contact-message');
-
-    if (!(name instanceof HTMLInputElement) || !(medium instanceof HTMLInputElement) || !(subject instanceof HTMLInputElement) || !(message instanceof HTMLTextAreaElement)) {
+    if (!(contactForm instanceof HTMLFormElement)) {
       return;
     }
 
     const run = async () => {
+      const firstError = messageFields
+        .map((field) => ({ field, message: validateField(field) }))
+        .find(({ message }) => Boolean(message));
+
+      if (firstError) {
+        firstError.field.focus();
+        contactForm.reportValidity();
+        setFeedback(firstError.message, 'error');
+        showToast(firstError.message, 'error');
+        return;
+      }
+
       if (contactSubmit instanceof HTMLButtonElement) {
         contactSubmit.disabled = true;
         contactSubmit.textContent = 'Sending...';
       }
 
-      if (contactFeedback) {
-        contactFeedback.textContent = '';
-      }
+      setFeedback('', 'neutral');
+
+      const formData = new FormData(contactForm);
+      const controller = new AbortController();
+      const requestPayload = {
+        name: normalizeValue(formData.get('name'), contactFieldLimits.name.max),
+        email: normalizeValue(formData.get('email'), contactFieldLimits.email.max),
+        subject: normalizeValue(formData.get('subject'), contactFieldLimits.subject.max),
+        message: normalizeValue(formData.get('message'), contactFieldLimits.message.max),
+        company: normalizeValue(formData.get('company'), contactFieldLimits.company.max),
+      };
+
+      window.clearTimeout(contactRequestTimer);
+      contactRequestTimer = window.setTimeout(() => controller.abort(), 15000);
 
       try {
         const response = await fetch('/api/contact', {
@@ -135,37 +308,37 @@ import { siteConfig } from '../../config/site';
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            name: name.value,
-            email: medium.value,
-            subject: subject.value,
-            message: message.value,
-          }),
+          body: JSON.stringify(requestPayload),
+          signal: controller.signal,
         });
 
         const result = await response.json().catch(() => ({ message: 'Unexpected server response.' }));
 
         if (!response.ok) {
-          throw new Error(typeof result.message === 'string' ? result.message : 'Unable to send your message.');
+          throw new Error(
+            typeof result.message === 'string' ? result.message : 'Unable to send your message.'
+          );
         }
 
         contactForm.reset();
-
-        if (contactFeedback) {
-          contactFeedback.textContent = `Sent to ${contactEmail}.`;
-        }
-
-        showToast(typeof result.message === 'string' ? result.message : 'Message sent successfully.');
+        messageFields.forEach((field) => setFieldError(field, ''));
+        setFeedback(`Sent to ${contactEmail}.`, 'success');
+        showToast(
+          typeof result.message === 'string' ? result.message : 'Message sent successfully.'
+        );
       } catch (error) {
         const errorMessage =
-          error instanceof Error ? error.message : 'Unable to send your message right now.';
+          error instanceof DOMException && error.name === 'AbortError'
+            ? 'The request timed out before the mail service responded.'
+            : error instanceof Error
+              ? error.message
+              : 'Unable to send your message right now.';
 
-        if (contactFeedback) {
-          contactFeedback.textContent = errorMessage;
-        }
-
+        setFeedback(errorMessage, 'error');
         showToast(errorMessage, 'error');
       } finally {
+        window.clearTimeout(contactRequestTimer);
+
         if (contactSubmit instanceof HTMLButtonElement) {
           contactSubmit.disabled = false;
           contactSubmit.textContent = 'Send Message';

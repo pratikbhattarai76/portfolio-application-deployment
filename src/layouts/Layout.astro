@@ -2,16 +2,64 @@
 import '../styles/global.css';
 import Navbar from '../components/site/Navbar.astro';
 import { siteConfig } from '../config/site';
+
+const canonicalUrl = new URL(Astro.url.pathname, siteConfig.siteUrl).toString();
+const socialImageUrl = new URL('/images/profile.jpg', siteConfig.siteUrl).toString();
+const pageTitle = `${siteConfig.name} | ${siteConfig.title}`;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={siteConfig.description} />
 		<meta name="theme-color" content="#020617" />
+		<meta name="robots" content="index,follow" />
+		<link rel="canonical" href={canonicalUrl} />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={siteConfig.description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:image" content={socialImageUrl} />
+		<meta property="og:site_name" content={siteConfig.name} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={siteConfig.description} />
+		<meta name="twitter:image" content={socialImageUrl} />
+		<script is:inline>
+			(() => {
+				const navigationEntries =
+					typeof performance.getEntriesByType === 'function'
+						? performance.getEntriesByType('navigation')
+						: [];
+				const navigationEntry = navigationEntries[0];
+				const legacyNavigation =
+					typeof Reflect?.get === 'function' ? Reflect.get(performance, 'navigation') : undefined;
+				const legacyNavigationTypeValue =
+					legacyNavigation && typeof Reflect?.get === 'function'
+						? Reflect.get(legacyNavigation, 'type')
+						: undefined;
+				const legacyNavigationType =
+					typeof legacyNavigationTypeValue === 'number'
+						? legacyNavigationTypeValue
+						: undefined;
+				const isReloadNavigation =
+					(Boolean(navigationEntry) &&
+						'type' in navigationEntry &&
+						navigationEntry.type === 'reload') ||
+					legacyNavigationType === 1;
+
+				if ('scrollRestoration' in history) {
+					history.scrollRestoration = 'manual';
+				}
+
+				if (isReloadNavigation) {
+					document.documentElement.dataset.scrollReset = 'reload';
+				}
+			})();
+		</script>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 		<link
@@ -22,9 +70,10 @@ import { siteConfig } from '../config/site';
 			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
 			rel="stylesheet"
 		/>
-		<title>{`${siteConfig.name} | ${siteConfig.title}`}</title>
+		<title>{pageTitle}</title>
 	</head>
 	<body class="site-body">
+		<a class="skip-link" href="#main-content">Skip to content</a>
 		<div class="site-grid-layer grid-bg" aria-hidden="true"></div>
 		<div class="site-ambient site-ambient-top" aria-hidden="true"></div>
 		<div class="site-ambient site-ambient-bottom" aria-hidden="true"></div>
@@ -34,11 +83,73 @@ import { siteConfig } from '../config/site';
 		<Navbar />
 		<slot />
 		<script is:inline>
+			const shouldResetScrollOnLoad = document.documentElement.dataset.scrollReset === 'reload';
+			const resetPageScroll = () => {
+				window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+				requestAnimationFrame(() => {
+					window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+				});
+
+				window.setTimeout(() => {
+					window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+				}, 0);
+			};
+
+			if (shouldResetScrollOnLoad) {
+				resetPageScroll();
+				window.addEventListener('load', resetPageScroll, { once: true });
+				window.addEventListener('pageshow', resetPageScroll, { once: true });
+			}
+
+			window.addEventListener(
+				'load',
+				() => {
+					if ('scrollRestoration' in history) {
+						history.scrollRestoration = 'auto';
+					}
+				},
+				{ once: true }
+			);
+
 			const navbar = document.getElementById('navbar');
 			const progressBar = document.getElementById('site-progress-bar');
 			const navLinks = Array.from(document.querySelectorAll('[data-nav-link]'));
-			const revealElements = document.querySelectorAll('.reveal-section');
-			const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			const revealElements = Array.from(document.querySelectorAll('.reveal-section'));
+			const reducedMotion =
+				window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+			const supportsIntersectionObserver = typeof window.IntersectionObserver === 'function';
+			const getNavbarOffset = () => (navbar instanceof HTMLElement ? navbar.offsetHeight + 24 : 88);
+			const getRevealStart = () => {
+				const compactViewport =
+					window.matchMedia?.('(max-width: 900px), (hover: none) and (pointer: coarse)').matches ??
+					false;
+
+				return window.innerHeight * (compactViewport ? 0.96 : 0.9);
+			};
+
+			const syncRevealVisibility = () => {
+				if (reducedMotion || revealElements.length === 0) {
+					revealElements.forEach((element) => element.classList.add('reveal-visible'));
+					return;
+				}
+
+				const revealStart = getRevealStart();
+				const revealEnd = -window.innerHeight * 0.18;
+
+				revealElements.forEach((element) => {
+					if (element.classList.contains('reveal-visible')) {
+						return;
+					}
+
+					const bounds = element.getBoundingClientRect();
+					const isNearViewport = bounds.top <= revealStart && bounds.bottom >= revealEnd;
+
+					if (isNearViewport) {
+						element.classList.add('reveal-visible');
+					}
+				});
+			};
 
 			document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 				anchor.addEventListener('click', (event) => {
@@ -50,14 +161,13 @@ import { siteConfig } from '../config/site';
 
 					const target = document.querySelector(href);
 
-					if (!target) {
+					if (!(target instanceof HTMLElement)) {
 						return;
 					}
 
 					event.preventDefault();
 
-					const offset = navbar ? navbar.offsetHeight + 24 : 88;
-					const top = target.getBoundingClientRect().top + window.scrollY - offset;
+					const top = target.getBoundingClientRect().top + window.scrollY - getNavbarOffset();
 
 					window.scrollTo({
 						top,
@@ -97,107 +207,105 @@ import { siteConfig } from '../config/site';
 				});
 			};
 
-			const sectionTargets = navLinks
-				.map((link) => {
-					const href = link.getAttribute('href');
+			const sectionTargets = navLinks.reduce((items, link) => {
+				const href = link.getAttribute('href');
 
-					if (!href) {
-						return null;
-					}
+				if (!href) {
+					return items;
+				}
 
-					const section = document.querySelector(href);
+				const section = document.querySelector(href);
 
-					if (!(section instanceof HTMLElement)) {
-						return null;
-					}
+				if (!(section instanceof HTMLElement)) {
+					return items;
+				}
 
-					return { link, section };
-				})
-				.filter(Boolean);
+				items.push({ link, section });
+				return items;
+			}, []);
+
+			const setActiveLinkFromViewport = () => {
+				if (sectionTargets.length === 0) {
+					return;
+				}
+
+				const viewportLine = window.scrollY + getNavbarOffset() + 48;
+				const currentSection =
+					sectionTargets
+						.slice()
+						.reverse()
+						.find(({ section }) => section.offsetTop <= viewportLine) ?? null;
+
+				setActiveLink(currentSection?.section.id ?? null);
+			};
 
 			const syncActiveLinkFromScroll = () => {
 				if (sectionTargets.length === 0) {
 					return;
 				}
 
-				const firstSectionTop = sectionTargets[0].section.offsetTop - (navbar ? navbar.offsetHeight + 48 : 112);
+				const firstSectionTop = sectionTargets[0].section.offsetTop - getNavbarOffset() - 24;
 
 				if (window.scrollY < firstSectionTop) {
 					setActiveLink(null);
+					return;
+				}
+
+				if (!supportsIntersectionObserver) {
+					setActiveLinkFromViewport();
 				}
 			};
 
-			if (revealElements.length > 0) {
-				if (reducedMotion) {
-					revealElements.forEach((element) => element.classList.add('reveal-visible'));
-				} else {
-					const revealElement = (element) => {
-						element.classList.add('reveal-visible');
-					};
+			syncRevealVisibility();
 
-					const observer = new IntersectionObserver(
+			if (sectionTargets.length > 0) {
+				if (supportsIntersectionObserver) {
+					const activeSectionObserver = new IntersectionObserver(
 						(entries) => {
-							entries.forEach((entry) => {
-								if (!entry.isIntersecting) {
-									return;
-								}
+							const visibleEntries = entries
+								.filter((entry) => entry.isIntersecting)
+								.sort((entryA, entryB) => entryB.intersectionRatio - entryA.intersectionRatio);
 
-								revealElement(entry.target);
-								observer.unobserve(entry.target);
-							});
+							if (visibleEntries.length === 0) {
+								return;
+							}
+
+							const [currentEntry] = visibleEntries;
+							setActiveLink(currentEntry.target.id);
 						},
 						{
-							threshold: 0.16,
-							rootMargin: '0px 0px -10% 0px',
+							rootMargin: '-38% 0px -48% 0px',
+							threshold: [0.2, 0.35, 0.5, 0.7],
 						}
 					);
 
-					revealElements.forEach((element) => {
-						const bounds = element.getBoundingClientRect();
-						const inInitialView = bounds.top < window.innerHeight * 0.9;
-
-						if (inInitialView) {
-							revealElement(element);
-							return;
-						}
-
-						observer.observe(element);
-					});
+					sectionTargets.forEach(({ section }) => activeSectionObserver.observe(section));
 				}
-			}
 
-			if (sectionTargets.length > 0) {
-				const activeSectionObserver = new IntersectionObserver(
-					(entries) => {
-						const visibleEntries = entries
-							.filter((entry) => entry.isIntersecting)
-							.sort((entryA, entryB) => entryB.intersectionRatio - entryA.intersectionRatio);
-
-						if (visibleEntries.length === 0) {
-							return;
-						}
-
-						const [currentEntry] = visibleEntries;
-						setActiveLink(currentEntry.target.id);
-					},
-					{
-						rootMargin: '-38% 0px -48% 0px',
-						threshold: [0.2, 0.35, 0.5, 0.7],
-					}
-				);
-
-				sectionTargets.forEach(({ section }) => activeSectionObserver.observe(section));
 				syncActiveLinkFromScroll();
 			}
 
-			updateProgress();
-			updateNavbarState();
-			syncActiveLinkFromScroll();
-			window.addEventListener('scroll', updateProgress, { passive: true });
-			window.addEventListener('scroll', updateNavbarState, { passive: true });
-			window.addEventListener('scroll', syncActiveLinkFromScroll, { passive: true });
-			window.addEventListener('resize', updateProgress);
-			window.addEventListener('resize', syncActiveLinkFromScroll);
+			const syncShell = () => {
+				updateProgress();
+				updateNavbarState();
+				syncActiveLinkFromScroll();
+				syncRevealVisibility();
+			};
+			let shellFrame = 0;
+			const requestShellSync = () => {
+				if (shellFrame) {
+					return;
+				}
+
+				shellFrame = window.requestAnimationFrame(() => {
+					shellFrame = 0;
+					syncShell();
+				});
+			};
+
+			syncShell();
+			window.addEventListener('scroll', requestShellSync, { passive: true });
+			window.addEventListener('resize', requestShellSync);
 		</script>
 	</body>
 </html>
