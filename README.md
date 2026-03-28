@@ -103,7 +103,7 @@ A Bash script implements pull-based deployment on the self-hosted server.
 
 ```bash
 git clone https://github.com/pratikbhattarai76/portfolio-app-deployment-pipeline.git
-cd portfolio-app
+cd portfolio-app-deployment-pipeline
 npm install
 cp .env.example .env
 npm run dev
