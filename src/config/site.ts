@@ -15,6 +15,6 @@ export const siteConfig = {
     'https://github.com/pratikbhattarai76/portfolio-application-deployment',
   portfolioAppLiveUrl: 'https://web.pratik-labs.xyz',
   linkedinUrl: 'https://www.linkedin.com/in/pratik-bhattarai-01896a255/',
-  cvUrl: '#',
+  cvUrl: '/documents/Pratik_Bhattarai_CV.pdf',
   footerTagline: 'Built around self-hosted infrastructure, cloud projects, and secure delivery.',
 } as const;
